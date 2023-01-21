@@ -2,7 +2,8 @@ from operator import itemgetter
 import warnings
 
 from draftsman.blueprintable import BlueprintBook, Blueprint, get_blueprintable_from_string
-from draftsman.warning import RailAlignmentWarning
+from draftsman.error import DataFormatError
+from draftsman.warning import OverlappingObjectsWarning, RailAlignmentWarning
 
 TRAILING_PRINT = '----------'
 
@@ -12,6 +13,7 @@ def parse_and_report(bp_str:str, debug:bool=False):
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RailAlignmentWarning)
+        warnings.simplefilter("ignore", OverlappingObjectsWarning)
 
         bp = get_blueprintable_from_string(bp_str)
 
@@ -31,8 +33,16 @@ def parse_text(bp_str:str, debug:bool=False):
     """Parse into a blueprint/blueprintbook only."""
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RailAlignmentWarning)
+        warnings.simplefilter("ignore", OverlappingObjectsWarning)
 
-        return get_blueprintable_from_string(bp_str)
+        data = None
+        try:
+            data = get_blueprintable_from_string(bp_str)
+        except DataFormatError as exc:
+            print(exc)
+            # print(type(data))
+
+        return data
 
 
 def report_hierarchy(data):
