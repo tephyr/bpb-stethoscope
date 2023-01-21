@@ -24,7 +24,8 @@ def blueprint_info(bptext:str, debug:bool=False):
     bp_dict = utils.string_to_JSON(data)
     print(f'Keys in text: {bp_dict.keys()}')
 
-    info.parse_and_report(data)
+    data = info.parse_and_report(data)
+    info.report_hierarchy(data)
 
     if 'blueprint' in bp_dict.keys():
         # iterate through blueprint.
