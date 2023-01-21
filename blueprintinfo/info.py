@@ -1,20 +1,29 @@
 from operator import itemgetter
+import warnings
 
 from draftsman.blueprintable import BlueprintBook, Blueprint, get_blueprintable_from_string
+from draftsman.warning import RailAlignmentWarning
 
 def parse_and_report(bp_str:str):
     """Basic info about the given blueprint."""
-    bp = get_blueprintable_from_string(bp_str)
-    print(f'type(bp): {type(bp)}')
+    bp = None
 
-    if is_blueprint(bp):
-        print('instance of Blueprint')
-    elif is_blueprintbook(bp):
-        print('instance of BlueprintBook')
-    else:
-        print('unhandled instance')
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RailAlignmentWarning)
 
-    return bp
+        bp = get_blueprintable_from_string(bp_str)
+
+        print(f'type(bp): {type(bp)}')
+
+        if is_blueprint(bp):
+            print('instance of Blueprint')
+        elif is_blueprintbook(bp):
+            print('instance of BlueprintBook')
+        else:
+            print('unhandled instance')
+
+        return bp
+
 
 def report_hierarchy(data):
     print('\n'.join(report_metadata(data)))

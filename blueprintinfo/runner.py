@@ -22,10 +22,12 @@ def blueprint_info(bptext:str, debug:bool=False):
     data = Path(bptext).read_text()
 
     bp_dict = utils.string_to_JSON(data)
-    print(f'Keys in text: {bp_dict.keys()}')
+    print(f'Keys in text: {bp_dict.keys()}; using file {bptext}')
 
     data = info.parse_and_report(data)
+    print()
     info.report_hierarchy(data)
+    print('---------------------')
 
     if 'blueprint' in bp_dict.keys():
         # iterate through blueprint.
