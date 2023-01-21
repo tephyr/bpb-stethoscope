@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from draftsman.blueprintable import BlueprintBook, Blueprint, get_blueprintable_from_string
 
 def parse_and_report(bp_str:str):
@@ -28,8 +30,11 @@ def report_metadata(data) -> list:
             result.append(f"icons: {', '.join(simplify_icons(data.icons))}")
 
         result.append(f'# of entities: {len(data.entities)}')
-        for k, v in report_entities(data).items():
-            result.append(f'{k}: {v}')
+        # for k, v in report_entities(data).items():
+        #     result.append(f'{k}: {v}')
+        for ent, count in sort_entities_by_count(report_entities(data)):
+            result.append(f'{ent}: {count}')
+
     return result
 
 def report_entities(data):
@@ -54,3 +59,7 @@ def is_blueprintbook(data):
 def simplify_icons(icon_list:list):
     if len(icon_list):
         return [f'{x["signal"]["name"]}' for x in icon_list]
+
+def sort_entities_by_count(entities:dict) -> list:
+    result = sorted(entities.items(), key=itemgetter(1), reverse=True)
+    return result
