@@ -24,32 +24,9 @@ def blueprint_info(bptext:str, debug:bool=False):
     bp_dict = utils.string_to_JSON(data)
     print(f'Keys in text: {bp_dict.keys()}; using file {bptext}')
 
-    data = info.parse_and_report(data, debug)
+    data = info.parse_text(data, debug)
     print()
     info.report_hierarchy(data)
-    print('---------------------')
-
-    if 'blueprint' in bp_dict.keys():
-        # iterate through blueprint.
-        pass
-    elif 'blueprintbook' in bp_dict.keys():
-        # Iterate through blueprint book.
-        pass
-
-        # for book in data['books']:
-        #     print(f'BlueprintBook: {book["label"]}, icons: {",".join(book.get("icons", []))}')
-        #     for bp in book.get('blueprints', []):
-        #         iconsString = '' if 'icons' not in bp else 'icons:' + ','.join(bp['icons'])
-        #         print(f'\tBlueprint: {bp["label"]}', iconsString, sep = ', ')
-        #         # API: required; data: optional
-        #         apiLine = f'\t\tAPI: {bp.get("api", "MISSING API")}'
-        #         if bp.get('api', ['?'])[0] not in blueprints.BLUEPRINTS_BY_API:
-        #             apiLine += ' [UNKNOWN API]'
-
-        #         if 'data' in bp:
-        #             apiLine += f' with {get_data_path(instructions, bp["data"])}'
-        #         print(apiLine, '\n')
-
 
 if __name__ == '__main__':
     cli()
