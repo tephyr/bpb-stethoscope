@@ -4,7 +4,7 @@ import warnings
 from draftsman.blueprintable import BlueprintBook, Blueprint, get_blueprintable_from_string
 from draftsman.warning import RailAlignmentWarning
 
-def parse_and_report(bp_str:str):
+def parse_and_report(bp_str:str, debug:bool=False):
     """Basic info about the given blueprint."""
     bp = None
 
@@ -13,7 +13,8 @@ def parse_and_report(bp_str:str):
 
         bp = get_blueprintable_from_string(bp_str)
 
-        print(f'type(bp): {type(bp)}')
+        if debug:
+            print(f'type(bp): {type(bp)}')
 
         if is_blueprint(bp):
             print('instance of Blueprint')
@@ -32,18 +33,27 @@ def report_metadata(data) -> list:
     """Report on title, description, icons."""
     result = []
     if is_blueprint(data):
-        result.append(f'label: {data.label}')
-        if data.description and len(data.description):
-            result.append(f'{data.description}')
-        if data.icons and len(data.icons):
-            result.append(f"icons: {', '.join(simplify_icons(data.icons))}")
-
+        result.extend(get_blueprintable_metadata(data))
         result.append(f'# of entities: {len(data.entities)}')
         # for k, v in report_entities(data).items():
         #     result.append(f'{k}: {v}')
         for ent, count in sort_entities_by_count(report_entities(data)):
             result.append(f'{ent}: {count}')
 
+    elif is_blueprintbook(data):
+        result.extend(get_blueprintable_metadata(data))
+        result.append(f'# of blueprints: {len(data.blueprints)}')
+
+
+    return result
+
+def get_blueprintable_metadata(data) -> list:
+    result = []
+    result.append(f'label: {data.label}')
+    if data.description and len(data.description):
+        result.append(f'{data.description}')
+    if data.icons and len(data.icons):
+        result.append(f"icons: {', '.join(simplify_icons(data.icons))}")
     return result
 
 def report_entities(data):
