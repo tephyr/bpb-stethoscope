@@ -78,6 +78,12 @@ class BlueprintTUI(App):
 
         highlighter = ReprHighlighter()
 
+        def use_node(name: str, data: object=None) -> bool:
+            if name in ('icons', 'entities'):
+                return False
+
+            return True
+
         def add_node(name: str, node: TreeNode, data: object) -> None:
             """Adds a node to the tree.
 
@@ -89,13 +95,15 @@ class BlueprintTUI(App):
             if isinstance(data, dict):
                 node._label = Text(f"{{}} {name}")
                 for key, value in data.items():
-                    new_node = node.add("")
-                    add_node(key, new_node, value)
+                    if use_node(key, value):
+                        new_node = node.add("")
+                        add_node(key, new_node, value)
             elif isinstance(data, list):
                 node._label = Text(f"[] {name}")
                 for index, value in enumerate(data):
-                    new_node = node.add("")
-                    add_node(str(index), new_node, value)
+                    if use_node(name, data):
+                        new_node = node.add("")
+                        add_node(str(index), new_node, value)
             else:
                 node._allow_expand = False
                 if name:
@@ -107,6 +115,7 @@ class BlueprintTUI(App):
                 node._label = label
 
         add_node("JSON", node, json_data)
+
 
     def on_mount(self) -> None:
         """Load the given JSON file."""
