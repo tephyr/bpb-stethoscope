@@ -16,7 +16,8 @@ from rich.text import Text
 from textual import log
 from textual.app import App, ComposeResult
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Tree, TreeNode, Button
+from textual.widgets import Header, Footer, Tree, Button
+from textual.widgets.tree import TreeNode
 
 @dataclass
 class BPUnzipper:
@@ -136,17 +137,13 @@ class BlueprintTUI(App):
 
     def action_toggle_all(self) -> None:
         tree = self.query_one(Tree)
-        # root_node = self.query_one('root_node')
-        # root_node.expand_all()
-
         root_node = tree.get_node_at_line(0)
         if root_node is not None:
             self.log(root_node)
             self.log(dir(root_node))
             # The docs say these are available, but the code fails out.
             # Because I'm on 0.10.1, and the docs reference **unreleased** 0.11.0.
-            # root_node.toggle_all()
-            # root_node.expand_all()
+            root_node.toggle_all()
 
 if __name__ == "__main__":
     app = BlueprintTUI()
