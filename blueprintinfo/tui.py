@@ -54,7 +54,7 @@ class BlueprintTUI(App):
     _bp_data:dict = None
 
     BINDINGS = [
-        # ("a", "add", "Add node"),
+        ("t", "toggle_all", "Toggle all"),
         ("l", "load", "Load data")
     ]
 
@@ -63,7 +63,7 @@ class BlueprintTUI(App):
         self._bpunzipper = BPUnzipper(sys.argv[1]) # TODO: Make explicit.
         yield Header()
         yield Footer()
-        yield Tree("Root")
+        yield Tree("Root", id="root_node")
 
     @classmethod
     def add_json(cls, node: TreeNode, json_data: object) -> None:
@@ -133,6 +133,20 @@ class BlueprintTUI(App):
         else:
             self.log('Parsing failed.')
             self.push_screen(AlertScreen(self._bpunzipper.get_error_msg()))
+
+    def action_toggle_all(self) -> None:
+        tree = self.query_one(Tree)
+        # root_node = self.query_one('root_node')
+        # root_node.expand_all()
+
+        root_node = tree.get_node_at_line(0)
+        if root_node is not None:
+            self.log(root_node)
+            self.log(dir(root_node))
+            # The docs say these are available, but the code fails out.
+            # Because I'm on 0.10.1, and the docs reference **unreleased** 0.11.0.
+            # root_node.toggle_all()
+            # root_node.expand_all()
 
 if __name__ == "__main__":
     app = BlueprintTUI()
