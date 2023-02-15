@@ -79,7 +79,7 @@ class BlueprintTUI(App):
         highlighter = ReprHighlighter()
 
         def use_node(name: str, data: object=None) -> bool:
-            if name in ('icons', 'entities'):
+            if name in ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles'):
                 return False
 
             return True
