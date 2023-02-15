@@ -19,6 +19,8 @@ from textual.screen import Screen
 from textual.widgets import Header, Footer, Tree, Button
 from textual.widgets.tree import TreeNode
 
+IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
+
 @dataclass
 class BPUnzipper:
     path_to_blueprint:str
@@ -30,7 +32,6 @@ class BPUnzipper:
         p = Path(self.path_to_blueprint).expanduser()
         if p.exists():
             self._blueprint_text = p.read_text()
-            # Convert from ??? to ???.
             return utils.string_to_JSON(self._blueprint_text)
         else:
             self._error_msg = f'Failed to find this file: {self.path_to_blueprint}.'
@@ -80,7 +81,7 @@ class BlueprintTUI(App):
         highlighter = ReprHighlighter()
 
         def use_node(name: str, data: object=None) -> bool:
-            if name in ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles'):
+            if name in IGNORE_KEYS:
                 return False
 
             return True
@@ -108,9 +109,18 @@ class BlueprintTUI(App):
             else:
                 node._allow_expand = False
                 if name:
+                    # label_parts = [
+                    #     Text.from_markup(f"[b]{name}[/b]="),
+                    #     *Text(data).split()
+                    # ]
+
                     label = Text.assemble(
                         Text.from_markup(f"[b]{name}[/b]="), highlighter(repr(data))
-                    )
+                        )
+                        # Text.split(highlighter(repr(data)))
+                        # *tuple(label_parts)
+                    # )
+                    # label = Text(f'{name}={data}')
                 else:
                     label = Text(repr(data))
                 node._label = label
@@ -140,7 +150,7 @@ class BlueprintTUI(App):
         root_node = tree.get_node_at_line(0)
         if root_node is not None:
             self.log(root_node)
-            self.log(dir(root_node))
+            # self.log(dir(root_node))
             # The docs say these are available, but the code fails out.
             # Because I'm on 0.10.1, and the docs reference **unreleased** 0.11.0.
             root_node.toggle_all()
