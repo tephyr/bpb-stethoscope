@@ -12,6 +12,7 @@ from draftsman.blueprintable import BlueprintBook, Blueprint
 
 import info
 import totals_reporter
+from tui import BlueprintTUI
 
 ## GLOBALS ##
 logger = None
@@ -66,13 +67,29 @@ def blueprint_raw(blueprint_path:str, totals:bool=False, log_level:str='CRITICAL
     else:
         logger.info(pprint.pprint(bp_dict))
 
+@cli.command()
+@click.option('--log-level', '-l',
+    type=click.Choice(('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'), case_sensitive=False),
+    default="CRITICAL",
+    help='Log level.')
+@click.option('--debug', '-d', is_flag=True, default=False, help="Activate debug mode (overrides --log-level).")
+@click.argument('blueprint_path', type=click.Path(exists=True))
+def stethoscope(blueprint_path:str, log_level:str='CRITICAL', debug:bool=False):
+    """
+    Launch the text UI.
+
+    BLUEPRINT_PATH: full path to blueprint file.
+    """
+    _setup_logger(log_level, debug)
+    app = BlueprintTUI()
+    app.run()
+
 
 def _setup_logger(log_level:str='CRITICAL', debug:bool=False):
     ## SETUP LOGGER ##
     global logger
     logger = logging.getLogger('bpi')
     if debug:
-        # print(f'{log_level=}, {debug=}')
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(log_level)

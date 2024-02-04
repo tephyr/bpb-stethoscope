@@ -6,10 +6,12 @@ requires-python = ">=3.12"
 dependencies = [
     "click==8.1.7",
     "factorio-draftsman==1.1.1",
+    "textual>=0.48.2",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "textual-dev>=1.4.0",
 ]
 
 [project.scripts]
