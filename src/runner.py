@@ -20,33 +20,44 @@ logger = None
 def cli():
     pass
 
-@cli.command(help="See information about the items contained within this blueprint or blueprint book.")
+@cli.command()
 @click.option('--debug', '-d', is_flag=True, default=False, help="Activate debug mode.")
-@click.argument('bptext', type=click.Path(exists=True))
-def blueprint_info(bptext:str, debug:bool=False):
-    data = Path(bptext).read_text()
+@click.argument('blueprint_path', type=click.Path(exists=True))
+def blueprint_info(blueprint_path:str, debug:bool=False):
+    """
+    See information about the items contained within this blueprint or blueprint book.
+
+    BLUEPRINT_PATH: full path to blueprint file.
+    """
+    _setup_logger(debug=debug)
+    data = Path(blueprint_path).read_text()
 
     bp_dict = utils.string_to_JSON(data)
-    print(f'Keys in text: {bp_dict.keys()}; using file {bptext}')
+    logger.debug(f'Keys in text: {bp_dict.keys()}; using file {blueprint_path}')
 
     data = info.parse_text(data, debug)
-    print()
     info.report_hierarchy(data)
 
-@cli.command(help="'Raw' representation of the blueprint.")
+@cli.command()
+@click.option('--totals', '-t', is_flag=True, default=False, help="Show totals.")
 @click.option('--log-level', '-l',
     type=click.Choice(('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'), case_sensitive=False),
     default="CRITICAL",
-    help='Select a log level.')
-@click.option('--totals', '-t', is_flag=True, default=False, help="Show totals.")
-@click.argument('bptext', type=click.Path(exists=True))
-def blueprint_raw(bptext:str, log_level:str='CRITICAL', totals:bool=False):
-    _setup_logger(log_level)
+    help='Log level.')
+@click.option('--debug', '-d', is_flag=True, default=False, help="Activate debug mode (overrides --log-level).")
+@click.argument('blueprint_path', type=click.Path(exists=True))
+def blueprint_raw(blueprint_path:str, totals:bool=False, log_level:str='CRITICAL', debug:bool=False):
+    """
+    'Raw' representation of the blueprint.
 
-    data = Path(bptext).read_text()
-    size_in_kb = Path(bptext).stat().st_size / 1024
+    BLUEPRINT_PATH: full path to blueprint file.
+    """
+    _setup_logger(log_level, debug)
+
+    data = Path(blueprint_path).read_text()
+    size_in_kb = Path(blueprint_path).stat().st_size / 1024
     size_in_kb_hr = f'{size_in_kb:,.1f}'
-    logger.info('Printing blueprint "%s", size %skb', bptext, size_in_kb_hr)
+    logger.info('Printing blueprint "%s", size %skb', blueprint_path, size_in_kb_hr)
     bp_dict = utils.string_to_JSON(data)
 
     if totals:
@@ -61,7 +72,7 @@ def _setup_logger(log_level:str='CRITICAL', debug:bool=False):
     global logger
     logger = logging.getLogger('bpi')
     if debug:
-        print(f'{dry_run=}, {log_level=}, {debug=}')
+        # print(f'{log_level=}, {debug=}')
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(log_level)
