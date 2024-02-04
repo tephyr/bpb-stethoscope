@@ -1,0 +1,18 @@
+[project]
+name = "bpb-stethoscope"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+dependencies = [
+    "click==8.1.7",
+    "factorio-draftsman==1.1.1",
+]
+
+[project.optional-dependencies]
+dev = [
+]
+
+[project.scripts]
+# package.module:function
+# pip install -e .
+runner = "runner:cli"
