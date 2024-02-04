@@ -12,6 +12,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "textual-dev>=1.4.0",
+    "snoop>=0.4.3",
 ]
 
 [project.scripts]

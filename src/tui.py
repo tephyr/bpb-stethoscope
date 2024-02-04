@@ -9,8 +9,6 @@ from pathlib import Path
 import sys
 import zipfile
 
-from draftsman import utils
-
 from rich.text import Text
 
 from textual import log
@@ -20,24 +18,6 @@ from textual.widgets import Header, Footer, Tree, Button
 from textual.widgets.tree import TreeNode
 
 IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
-
-@dataclass
-class BPUnzipper:
-    path_to_blueprint:str
-    _blueprint_text:str = None
-    _error_msg:str = None
-
-    def unzip(self) -> dict:
-        self._error_msg = None
-        p = Path(self.path_to_blueprint).expanduser()
-        if p.exists():
-            self._blueprint_text = p.read_text()
-            return utils.string_to_JSON(self._blueprint_text)
-        else:
-            self._error_msg = f'Failed to find this file: {self.path_to_blueprint}.'
-
-    def get_error_msg(self):
-        return self._error_msg
 
 class AlertScreen(Screen):
     def compose(self, msg_text) -> ComposeResult:
@@ -51,7 +31,7 @@ class AlertScreen(Screen):
         self.app.pop_screen()
 
 class BlueprintTUI(App):
-
+    TITLE = "Stethoscope"
     _bpunzipper:BPUnzipper = None
     _bp_data:dict = None
 
