@@ -30,6 +30,9 @@ class BPTree:
         else:
             self._error_msg = f'Failed to find this file: {self._path_to_blueprint}.'
 
+    def _run_filter(self):
+        self._bp_filter = BlueprintFilter(self.blueprint_data, OBJECT_KEYS, ACCEPT_KEYS)
+
     def get_error_msg(self):
         return self._error_msg
 
@@ -39,5 +42,17 @@ class BPTree:
 
         TODO: add customizable settings.
         """
-        self._bp_filter = BlueprintFilter(self.blueprint_data, OBJECT_KEYS, ACCEPT_KEYS)
+        self._run_filter()
         return self._bp_filter.filter()
+
+    def get_root_key(self)->str:
+        """
+        Returns the key at the root of the *filtered* data.
+        """
+        if self._bp_filter is None:
+            self._run_filter()
+        root_keys = self._bp_filter.filter().keys()
+        if len(root_keys) == 1:
+            return list(root_keys)[0]
+        else:
+            self._error_msg = f"More than one root key: {root_keys}"

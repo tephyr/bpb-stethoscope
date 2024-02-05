@@ -17,6 +17,8 @@ from textual.screen import Screen
 from textual.widgets import Header, Footer, Tree, Button
 from textual.widgets.tree import TreeNode
 
+from bptree import BPTree
+
 IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
 
 class AlertScreen(Screen):
@@ -32,8 +34,6 @@ class AlertScreen(Screen):
 
 class BlueprintTUI(App):
     TITLE = "Stethoscope"
-    _bpunzipper:BPUnzipper = None
-    _bp_data:dict = None
 
     BINDINGS = [
         ("t", "toggle_all", "Toggle all"),
@@ -42,7 +42,7 @@ class BlueprintTUI(App):
 
     def compose(self) -> ComposeResult:
         # path = "./" if len(sys.argv) < 2 else sys.argv[1]
-        self._bpunzipper = BPUnzipper(sys.argv[1]) # TODO: Make explicit.
+        self._bp_tree = None # BPTree instance
         yield Header()
         yield Footer()
         yield Tree("Root", id="root_node")
@@ -110,20 +110,21 @@ class BlueprintTUI(App):
 
     def on_mount(self) -> None:
         """Load the given JSON file."""
-        self.log(self._bpunzipper)
+        self._bp_tree = BPTree(sys.argv[1])
+        self.log(self._bp_tree.get_error_msg())
 
     def action_load(self) -> None:
-        """Add a node to the tree."""
+        """Add all nodes to the tree."""
         tree = self.query_one(Tree)
-        json_node = tree.root.add("JSON")
-        self._bp_data = self._bpunzipper.unzip()
-        if self._bp_data is not None:
-            log(self._bp_data.keys())
-            self.add_json(json_node, self._bp_data)
+        root_key = self._bp_tree.get_root_key()
+        tree.clear()
+        # root_node = tree.root.add("JSON")
+        if self._bp_tree.get_error_msg() is None:
+            self.add_json(tree.root, self._bp_tree.get_filtered_data())
             tree.root.expand()
         else:
             self.log('Parsing failed.')
-            self.push_screen(AlertScreen(self._bpunzipper.get_error_msg()))
+            self.push_screen(AlertScreen(self._bp_tree.get_error_msg()))
 
     def action_toggle_all(self) -> None:
         tree = self.query_one(Tree)
