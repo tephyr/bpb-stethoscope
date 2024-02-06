@@ -111,6 +111,7 @@ class BlueprintTUI(App):
     def on_mount(self) -> None:
         """Load the given JSON file."""
         self._bp_tree = BPTree(sys.argv[1])
+        self._bp_tree.adjust_keys_to_return(keep=('index', 'active_index'))
         self.log(self._bp_tree.get_error_msg())
 
     def action_load(self) -> None:

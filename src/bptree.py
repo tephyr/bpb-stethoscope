@@ -5,7 +5,7 @@ from draftsman import utils
 from filter_blueprints import BlueprintFilter
 
 IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
-ACCEPT_KEYS = ('blueprint', 'blueprint_book', 'label', 'active_index')
+VALUE_KEYS = ('blueprint', 'blueprint_book', 'label', 'active_index')
 OBJECT_KEYS = ('blueprint_book', 'blueprint')
 
 class BPTree:
@@ -20,6 +20,7 @@ class BPTree:
         self.blueprint_data = {}
         self.load_blueprint()
         self._bp_filter = None # BlueprintFilter()
+        self._value_keys_to_use = set(VALUE_KEYS)
 
     def load_blueprint(self):
         self._error_msg = None
@@ -30,8 +31,17 @@ class BPTree:
         else:
             self._error_msg = f'Failed to find this file: {self._path_to_blueprint}.'
 
+    def adjust_keys_to_return(self, keep:list[str]=None, drop:list[str]=None)->None:
+        """
+        Add and/or remove keys to apply to the filter.
+        """
+        if keep is not None:
+            self._value_keys_to_use.update(keep)
+        if drop is not None:
+            self._value_keys_to_use.difference_update(drop)
+
     def _run_filter(self):
-        self._bp_filter = BlueprintFilter(self.blueprint_data, OBJECT_KEYS, ACCEPT_KEYS)
+        self._bp_filter = BlueprintFilter(self.blueprint_data, OBJECT_KEYS, self._value_keys_to_use)
 
     def get_error_msg(self):
         return self._error_msg

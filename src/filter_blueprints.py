@@ -79,6 +79,7 @@ class BlueprintFilter():
     def _filter_bp(self, bp:dict)->dict:
         result = {}
         for k in self.values_inclusive:
-            result[k] = bp.get(k)
+            if k in bp:
+                result[k] = bp.get(k)
         return result
 
