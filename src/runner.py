@@ -84,6 +84,20 @@ def stethoscope(blueprint_path:str, log_level:str='CRITICAL', debug:bool=False):
     app = BlueprintTUI()
     app.run()
 
+@cli.command()
+@click.argument('blueprint_path', type=click.Path(exists=True))
+@click.argument('output_path', type=click.Path())
+def decoder(blueprint_path:str, output_path:str):
+    """
+    Decode a Factorio blueprint string to a JSON file.
+
+    BLUEPRINT_PATH: full path to blueprint file.
+
+    OUTPUT_PATH: destination file; will overwrite.
+    """
+    raw_data = Path(blueprint_path).read_text()
+    bp_dict = utils.string_to_JSON(raw_data)
+    Path(output_path).write_text(json.dumps(bp_dict, indent=2))
 
 def _setup_logger(log_level:str='CRITICAL', debug:bool=False):
     ## SETUP LOGGER ##
