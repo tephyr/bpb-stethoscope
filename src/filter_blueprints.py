@@ -29,7 +29,7 @@ Basic structure::
 """
 
 class BlueprintFilter():
-    def __init__(self, initial_blueprint:dict, objects_inclusive: tuple[str], values_inclusive:tuple[str]):
+    def __init__(self, initial_blueprint:dict, objects_inclusive: tuple[str]=None, values_inclusive:tuple[str]=None):
         self.initial_data = initial_blueprint or {}
         self.objects_inclusive = objects_inclusive or ('blueprint_book', 'blueprint')
         self.values_inclusive = {'item'} # A set.  This value is always required.
