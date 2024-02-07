@@ -1,0 +1,33 @@
+{
+  "blueprint_book": {
+    "blueprints": [
+      {
+        "blueprint": {
+          "description": "First assembler.",
+          "item": "blueprint",
+          "label": "Assembler 1, wood chest"
+        },
+        "index": 0
+      },
+      {
+        "blueprint": {
+          "description": "Second assembler.",
+          "item": "blueprint",
+          "label": "Assembler 2, iron chest"
+        },
+        "index": 1
+      },
+      {
+        "blueprint": {
+          "description": "Third assembler.",
+          "item": "blueprint",
+          "label": "Assembler 3, steel chest"
+        },
+        "index": 2
+      }
+    ],
+    "item": "blueprint-book",
+    "label": "Simple blueprint book",
+    "active_index": 0
+  }
+}

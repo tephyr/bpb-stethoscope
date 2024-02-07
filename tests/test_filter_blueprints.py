@@ -10,15 +10,18 @@ class TestBlueprintSingle():
 
     @pytest.fixture
     def original_data(self):
-        return helpers.load_json_by_name('blueprint.single.json')
+        return helpers.load_json_by_name(self.JSON_FILE)
         
     def test_single_blueprint_default(self, original_data):
-        """Test a single blueprint with default values for filter."""
+        """
+        Test a single blueprint with default values for filter.
+        
+        ``label`` is NOT included by default.
+        """
         filter_worker = filter_blueprints.BlueprintFilter(original_data)
         expected = {
           "blueprint": {
-            "item": "blueprint",
-            # "label": "Single blueprint" # This is NOT included by default.
+            "item": "blueprint"
           }
         }
         assert filter_worker.filter() == expected
@@ -35,9 +38,53 @@ class TestBlueprintSingle():
         }
         assert filter_worker.filter() == expected
 
-# def test_single_blueprintbook():
-#     """Test a single blueprintbook with only direct blueprint children."""
-#     assert False
+class TestBluprintBook():
+    """
+    Test a single blueprintbook with one level of children.
+
+    ``blueprintbook.simple.json``: one blueprintbook containing 3 blueprints, each with a single assembler (levels 1-3) set to produce wood, iron, and steel chests
+    """
+
+    JSON_FILE = 'blueprintbook.simple.json'
+
+    @pytest.fixture(scope="class")
+    def original_data(self):
+        return helpers.load_json_by_name(self.JSON_FILE)
+
+    @pytest.fixture(scope="class")
+    def get_data(self):
+        def _get_data(file_name:str):
+            return helpers.load_json_by_name(file_name)
+
+        return _get_data
+
+    def test_single_blueprintbook_default(self, original_data):
+        """Test a single blueprint book with default values."""
+        filter_worker = filter_blueprints.BlueprintFilter(original_data)
+        expected = {
+            "blueprint_book": {
+                "item": "blueprint-book",
+                "blueprints": [
+                    {
+                        "item": "blueprint"
+                    },
+                    {
+                        "item": "blueprint"
+                    },
+                    {
+                        "item": "blueprint"
+                    }
+                ]
+            }
+        }
+
+        assert filter_worker.filter() == expected
+
+    def test_single_blueprintbook_custom_value_keys(self, original_data, get_data):
+        """Test a single blueprint book with custom values for filter."""
+        filter_worker = filter_blueprints.BlueprintFilter(original_data, values_inclusive=('label', 'description', 'index', 'active_index'))
+        expected = get_data('blueprintbook.simple.filtered.with-label-description.json')
+        assert filter_worker.filter() == expected
 
 # def test_multi_level_blueprintbook():
 #     """Test multiple levels of blueprintbooks."""
