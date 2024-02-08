@@ -27,6 +27,8 @@ Basic structure::
                 'index': 1
             }, {
 """
+KNOWN_CONTAINERS = ('blueprint_book', 'blueprint', 'upgrade_planner', 'deconstruction_planner')
+SET_KC = set(KNOWN_CONTAINERS)
 
 class BlueprintFilter():
     def __init__(self, initial_blueprint:dict, objects_inclusive: tuple[str]=None, values_inclusive:tuple[str]=None):
@@ -39,12 +41,15 @@ class BlueprintFilter():
     # @snoop(depth=1)
     def filter(self)->dict:
         """
-        Filter the current blueprint, keeping only the keys from keys_inclusive.
+        Filter the current blueprint, keeping only the keys from keys_inclusive.  Keep the same hierarchy.
         """
         result = {}
-        for object_key, value in self.initial_data.items():
-            if object_key in self.objects_inclusive:
-                result[object_key] = self._filter_by_object_type(object_key, value)
+
+        top_level_key = self._get_container_key(self.initial_data)
+
+        if top_level_key in self.objects_inclusive:
+            result[top_level_key] = self._filter_by_object_type(top_level_key, self.initial_data[top_level_key])
+
         return result
 
     def _filter_by_object_type(self, object_key:str, value:any)->any:
@@ -59,15 +64,27 @@ class BlueprintFilter():
 
         return result
 
+    def _filter_by_container(self, container:dict)->any:
+        result = None
+        # Check the keys to determin the container type.
+        if 'blueprint_book' in container:
+            result = self._filter_bpb(container)
+        elif 'blueprint' in container:
+            result = self._filter_bp(container)
+
+        return result
+
+
     def _filter_bpb(self, bpb:dict)->dict:
         result = {}
         if 'blueprints' in bpb:
             result['blueprints'] = []
-        for bp in bpb['blueprints']:
-            for key_x, val_x in bp.items():
-                filtered_obj = self._filter_by_object_type(key_x, val_x)
-                if filtered_obj is not None:
-                    result['blueprints'].append(filtered_obj)
+        for container in bpb['blueprints']:
+            # This is the *container* for the blueprint (or upgrade/deconstruction planner).
+            # It will have an index which may signal how many blank spots are between it and the previous container.
+            filtered_obj = self._filter_by_container(container)
+            if filtered_obj is not None:
+                result['blueprints'].append(filtered_obj)
 
         for val in self.values_inclusive:
             if val in bpb:
@@ -83,3 +100,14 @@ class BlueprintFilter():
                 result[k] = bp.get(k)
         return result
 
+    def _get_container_key(self, data:dict)->str:
+        """
+        Get an object type by finding any of the known containers in the keys.
+
+        Fail out if not found - that signifies a change in format/error in data.
+        """
+        # set_keys = set(data.keys())
+        common_keys = SET_KC.intersection(data.keys())
+        assert len(common_keys) == 1
+
+        return common_keys.pop()

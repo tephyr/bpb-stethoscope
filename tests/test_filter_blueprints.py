@@ -66,13 +66,19 @@ class TestBluprintBook():
                 "item": "blueprint-book",
                 "blueprints": [
                     {
-                        "item": "blueprint"
+                        "blueprint": {
+                            "item": "blueprint"
+                        },
                     },
                     {
-                        "item": "blueprint"
+                        "blueprint": {
+                            "item": "blueprint"
+                        },
                     },
                     {
-                        "item": "blueprint"
+                        "blueprint": {
+                            "item": "blueprint"
+                        }
                     }
                 ]
             }
