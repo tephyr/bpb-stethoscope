@@ -64,27 +64,23 @@ class BlueprintFilter():
 
         return result
 
-    def _filter_by_container(self, container:dict)->any:
-        result = None
-        # Check the keys to determin the container type.
-        if 'blueprint_book' in container:
-            result = self._filter_bpb(container)
-        elif 'blueprint' in container:
-            result = self._filter_bp(container)
-
-        return result
-
-
     def _filter_bpb(self, bpb:dict)->dict:
         result = {}
-        if 'blueprints' in bpb:
+        if 'blueprints' in bpb and type(bpb['blueprints']) is list:
             result['blueprints'] = []
-        for container in bpb['blueprints']:
-            # This is the *container* for the blueprint (or upgrade/deconstruction planner).
-            # It will have an index which may signal how many blank spots are between it and the previous container.
-            filtered_obj = self._filter_by_container(container)
-            if filtered_obj is not None:
-                result['blueprints'].append(filtered_obj)
+
+            # Go depth-first.
+            for container in bpb['blueprints']:
+                # This is the *container* for the blueprint (or upgrade/deconstruction planner).
+                # It has an index value which signals the order of appearance, and how many blank spots are between it and the previous container.
+                container_key = self._get_container_key(container)
+                filtered_obj = self._filter_by_object_type(container_key, container[container_key])
+                if filtered_obj is not None:
+                    result['blueprints'].append({container_key: filtered_obj})
+                    # Check for additional keys to copy over at this level (other container keys).
+                    for val in self.values_inclusive:
+                        if val in container:
+                            result['blueprints'][-1][val] = container[val]
 
         for val in self.values_inclusive:
             if val in bpb:

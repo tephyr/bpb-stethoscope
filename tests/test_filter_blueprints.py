@@ -65,27 +65,16 @@ class TestBluprintBook():
             "blueprint_book": {
                 "item": "blueprint-book",
                 "blueprints": [
-                    {
-                        "blueprint": {
-                            "item": "blueprint"
-                        },
-                    },
-                    {
-                        "blueprint": {
-                            "item": "blueprint"
-                        },
-                    },
-                    {
-                        "blueprint": {
-                            "item": "blueprint"
-                        }
-                    }
+                    {"blueprint": {"item": "blueprint"} },
+                    {"blueprint": {"item": "blueprint"} },
+                    {"blueprint": {"item": "blueprint"} }
                 ]
             }
         }
 
         assert filter_worker.filter() == expected
 
+    # @pytest.mark.skip
     def test_single_blueprintbook_custom_value_keys(self, original_data, get_data):
         """Test a single blueprint book with custom values for filter."""
         filter_worker = filter_blueprints.BlueprintFilter(original_data, values_inclusive=('label', 'description', 'index', 'active_index'))
