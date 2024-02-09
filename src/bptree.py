@@ -13,23 +13,29 @@ class BPTree:
     Load, parse and make available a simplified and filtered tree of data from any blueprint/blueprintbook file.
     """
 
-    def __init__(self, path_to_blueprint:str):
+    def __init__(self, path_to_blueprint:str=None, blueprint_string:str=None):
         self._path_to_blueprint = path_to_blueprint
+        self._blueprint_string = blueprint_string
         self._error_msg = None
-        self._blueprint_text = None
         self.blueprint_data = {}
         self.load_blueprint()
         self._bp_filter = None # BlueprintFilter()
         self._value_keys_to_use = set(VALUE_KEYS)
+        if path_to_blueprint is None:
+            if blueprint_string is None:
+                raise RuntimeError("Either path or blueprint string must be provided.")
 
     def load_blueprint(self):
         self._error_msg = None
-        p = Path(self._path_to_blueprint).expanduser()
-        if p.exists():
-            self._blueprint_text = p.read_text()
-            self.blueprint_data = utils.string_to_JSON(self._blueprint_text)
+        if self._path_to_blueprint:
+            p = Path(self._path_to_blueprint).expanduser()
+            if p.exists():
+                self._blueprint_string = p.read_text()
+                self.blueprint_data = utils.string_to_JSON(self._blueprint_string)
+            else:
+                self._error_msg = f'Failed to find this file: {self._path_to_blueprint}.'
         else:
-            self._error_msg = f'Failed to find this file: {self._path_to_blueprint}.'
+            self.blueprint_data = utils.string_to_JSON(self._blueprint_string)
 
     def adjust_keys_to_return(self, keep:list[str]=None, drop:list[str]=None)->None:
         """

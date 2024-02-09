@@ -17,3 +17,13 @@ def load_json_by_name(file_name:str)->dict:
     # print(f'{path_data=}')
     # print(path_data.read_text())
     return json.loads(path_data.read_text())
+
+def load_txt_by_name(file_name:str)->str:
+    """
+    Load any text file & return the string.
+    
+    Assumes all paths are relative to ./data/.
+    """
+    test_root = Path(__file__).parent
+    path_data = test_root / 'data' / file_name
+    return path_data.read_text()
