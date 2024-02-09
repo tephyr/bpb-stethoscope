@@ -38,7 +38,7 @@ class TestBlueprintSingle():
         }
         assert filter_worker.filter() == expected
 
-class TestBluprintBook():
+class TestBlueprintBookSingleLevel():
     """
     Test a single blueprintbook with one level of children.
 
@@ -81,7 +81,12 @@ class TestBluprintBook():
         expected = get_data('blueprintbook.simple.filtered.with-label-description.json')
         assert filter_worker.filter() == expected
 
-# def test_multi_level_blueprintbook():
-#     """Test multiple levels of blueprintbooks."""
-#     assert False
+class TestBlueprintBookMultipleLevel():
+    """
+    Test a blueprint book containing a hierarchy of other blueprint books.
+    """
+    # def test_multi_level_blueprintbook():
+    #     """Test multiple levels of blueprintbooks."""
+    #     assert False
 
+    pass
