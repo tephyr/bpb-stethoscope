@@ -104,6 +104,6 @@ class BlueprintFilter():
         """
         # set_keys = set(data.keys())
         common_keys = SET_KC.intersection(data.keys())
-        assert len(common_keys) == 1
+        assert len(common_keys) == 1, f"Not enough or too many keys (should be only 1: {common_keys=}, {data.keys()=})"
 
         return common_keys.pop()
