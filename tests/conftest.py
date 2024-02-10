@@ -3,6 +3,12 @@ import pytest
 
 from helpers import load_txt_by_name
 
+LABELLED_TXT = (
+    ('blueprint', 'blueprint.single.txt'),
+    ('blueprint_book', 'blueprintbook.simple.txt'),
+    ('blueprint_book', 'blueprintbook.less-simple.txt')
+)
+
 @pytest.fixture
 def get_a_txt():
     """
@@ -16,3 +22,10 @@ def get_a_txt():
         return load_txt_by_name(file_name)
 
     return _get_a_txt
+
+@pytest.fixture(params=LABELLED_TXT)
+def get_every_txt_labelled(request):
+    """
+    Return a tuple of root_key, blueprint text.
+    """
+    return (request.param[0], load_txt_by_name(request.param[1]))

@@ -8,6 +8,7 @@ from bptree import BPTree
 def get_every_txt(request):
     return helpers.load_txt_by_name(request.param)
 
+
 class TestBPTree():
 
     def test_basics(self, get_every_txt):
@@ -34,11 +35,12 @@ class TestBPTree():
         bp_tree.adjust_keys_to_return(drop=['label'])
         assert 'label' not in bp_tree._value_keys_to_use
 
+    def test_get_filtered_data(self, get_every_txt):
+        bp_tree = BPTree(blueprint_string=get_every_txt)
+        assert type(bp_tree.get_filtered_data()) is dict
 
-    @pytest.mark.skip
-    def test_get_filtered_data(self):
-        pass
-
-    @pytest.mark.skip
-    def test_get_root_key(self):
-        pass
+    # @pytest.mark.skip
+    def test_get_root_key(self, get_every_txt_labelled):
+        bp_tree = BPTree(blueprint_string=get_every_txt_labelled[1])
+        root_key = bp_tree.get_root_key()
+        assert root_key == get_every_txt_labelled[0], f"Got {root_key} instead of {get_every_txt_labelled[0]}"
