@@ -41,9 +41,9 @@ class BPTree:
         """
         Add and/or remove keys to apply to the filter.
         """
-        if type(keep) is not list and type(drop) is not list:
+        if type(keep) not in [list, tuple] and type(drop) not in [list, tuple]:
             raise RuntimeError("Either keep or drop must be given; both must be lists.")
-        # print(f'adjust_keys_to_return {keep=} {drop=}')
+        print(f'adjust_keys_to_return {keep=} {drop=}')
         if keep is not None:
             self._value_keys_to_use.update(keep)
         if drop is not None:

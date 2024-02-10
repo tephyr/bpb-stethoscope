@@ -25,8 +25,15 @@ class TestBPTree():
     def test_adjust_keys(self, get_every_txt):
         bp_tree = BPTree(blueprint_string=get_every_txt)
         original_value_keys_length = len(bp_tree._value_keys_to_use)
+        # Send as list.
         bp_tree.adjust_keys_to_return(['foo'])
         assert len(bp_tree._value_keys_to_use) == original_value_keys_length + 1
+        # Send as tuple.
+        bp_tree.adjust_keys_to_return(('bar', ))
+        assert len(bp_tree._value_keys_to_use) == original_value_keys_length + 2
+        # Repeat inputs; should not change data.
+        bp_tree.adjust_keys_to_return(('bar', 'foo'))
+        assert len(bp_tree._value_keys_to_use) == original_value_keys_length + 2
 
     def test_remove_keys(self, get_a_txt):
         bp_tree = BPTree(blueprint_string=get_a_txt('blueprint.single.txt'))
