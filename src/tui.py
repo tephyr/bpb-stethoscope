@@ -19,7 +19,7 @@ from textual.widgets.tree import TreeNode
 
 from bptree import BPTree
 
-IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
+IGNORE_KEYS = ('icons', 'entities', 'version', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
 
 class AlertScreen(Screen):
     def compose(self, msg_text) -> ComposeResult:
@@ -41,7 +41,6 @@ class BlueprintTUI(App):
     ]
 
     def compose(self) -> ComposeResult:
-        # path = "./" if len(sys.argv) < 2 else sys.argv[1]
         self._bp_tree = None # BPTree instance
         yield Header()
         yield Footer()
@@ -103,7 +102,7 @@ class BlueprintTUI(App):
     def on_mount(self) -> None:
         """Load the given JSON file."""
         self._bp_tree = BPTree(sys.argv[1])
-        self._bp_tree.adjust_keys_to_return(keep=('index', 'active_index'))
+        self._bp_tree.adjust_keys_to_return(keep=('index', 'active_index'), drop=IGNORE_KEYS)
         self.log(self._bp_tree.get_error_msg())
         self.action_load()
 
@@ -111,10 +110,10 @@ class BlueprintTUI(App):
         """Add all nodes to the tree."""
         tree = self.query_one(Tree)
         root_key = self._bp_tree.get_root_key()
-        tree.reset(root_key)
+        tree.reset(root_key) # This wipes the tree, including the root node.
         if self._bp_tree.get_error_msg() is None:
             self.add_json(tree.get_node_at_line(0), self._bp_tree.get_filtered_data()[root_key])
-            tree.root.expand()
+            tree.root.toggle_all()
         else:
             self.log('Parsing failed.')
             self.push_screen(AlertScreen(self._bp_tree.get_error_msg()))
