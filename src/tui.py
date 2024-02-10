@@ -60,12 +60,6 @@ class BlueprintTUI(App):
 
         highlighter = ReprHighlighter()
 
-        def use_node(name: str, data: object=None) -> bool:
-            if name in IGNORE_KEYS:
-                return False
-
-            return True
-
         def add_node(name: str, node: TreeNode, data: object) -> None:
             """Adds a node to the tree.
 
@@ -77,15 +71,13 @@ class BlueprintTUI(App):
             if isinstance(data, dict):
                 node._label = Text(f"{{}} {name}")
                 for key, value in data.items():
-                    if use_node(key, value):
-                        new_node = node.add("")
-                        add_node(key, new_node, value)
+                    new_node = node.add("")
+                    add_node(key, new_node, value)
             elif isinstance(data, list):
                 node._label = Text(f"[] {name}")
                 for index, value in enumerate(data):
-                    if use_node(name, data):
-                        new_node = node.add("")
-                        add_node(str(index), new_node, value)
+                    new_node = node.add("")
+                    add_node(str(index), new_node, value)
             else:
                 node._allow_expand = False
                 if name:
@@ -105,7 +97,7 @@ class BlueprintTUI(App):
                     label = Text(repr(data))
                 node._label = label
 
-        add_node("JSON", node, json_data)
+        add_node(node.label, node, json_data)
 
 
     def on_mount(self) -> None:
@@ -113,15 +105,15 @@ class BlueprintTUI(App):
         self._bp_tree = BPTree(sys.argv[1])
         self._bp_tree.adjust_keys_to_return(keep=('index', 'active_index'))
         self.log(self._bp_tree.get_error_msg())
+        self.action_load()
 
     def action_load(self) -> None:
         """Add all nodes to the tree."""
         tree = self.query_one(Tree)
         root_key = self._bp_tree.get_root_key()
-        tree.clear()
-        # root_node = tree.root.add("JSON")
+        tree.reset(root_key)
         if self._bp_tree.get_error_msg() is None:
-            self.add_json(tree.root, self._bp_tree.get_filtered_data())
+            self.add_json(tree.get_node_at_line(0), self._bp_tree.get_filtered_data()[root_key])
             tree.root.expand()
         else:
             self.log('Parsing failed.')
@@ -132,9 +124,6 @@ class BlueprintTUI(App):
         root_node = tree.get_node_at_line(0)
         if root_node is not None:
             self.log(root_node)
-            # self.log(dir(root_node))
-            # The docs say these are available, but the code fails out.
-            # Because I'm on 0.10.1, and the docs reference **unreleased** 0.11.0.
             root_node.toggle_all()
 
 if __name__ == "__main__":
