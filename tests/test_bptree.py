@@ -23,13 +23,11 @@ class TestBPTree():
         assert type(bp_tree.blueprint_data) is dict, "blueprint_data must always be a dict."
         assert len(bp_tree.blueprint_data.keys()) == 1, "blueprint_data must have only 1 key."
 
-    @pytest.mark.skip
-    def test_load_single_blueprint(self):
-        pass
+    def test_basic_requirements(self):
+        """Throw an error if no file or string given."""
+        with pytest.raises(RuntimeError):
+            bp_tree = BPTree()
 
-    @pytest.mark.skip
-    def test_load_blueprintbook(self):
-        pass
 
     @pytest.mark.skip
     def test_adjust_keys(self):

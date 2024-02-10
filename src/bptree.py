@@ -18,12 +18,12 @@ class BPTree:
         self._blueprint_string = blueprint_string
         self._error_msg = None
         self.blueprint_data = {}
-        self.load_blueprint()
-        self._bp_filter = None # BlueprintFilter()
-        self._value_keys_to_use = set(VALUE_KEYS)
         if path_to_blueprint is None:
             if blueprint_string is None:
                 raise RuntimeError("Either path or blueprint string must be provided.")
+        self.load_blueprint()
+        self._bp_filter = None # BlueprintFilter()
+        self._value_keys_to_use = set(VALUE_KEYS)
 
     def load_blueprint(self):
         self._error_msg = None
