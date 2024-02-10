@@ -5,21 +5,14 @@ import helpers
 from bptree import BPTree
 
 @pytest.fixture(scope="module", params=('blueprint.single.txt', 'blueprintbook.simple.txt', 'blueprintbook.less-simple.txt'))
-def get_a_txt(request):
+def get_every_txt(request):
     return helpers.load_txt_by_name(request.param)
 
 class TestBPTree():
 
-    # @pytest.fixture(scope="class", autouse=True)
-    # def get_txt(self):
-    #     def _get_txt(file_name:str):
-    #         return helpers.load_txt_by_name(file_name)
-
-    #     return _get_txt
-
-    def test_basics(self, get_a_txt):
+    def test_basics(self, get_every_txt):
         """Happy path."""
-        bp_tree = BPTree(blueprint_string=get_a_txt)
+        bp_tree = BPTree(blueprint_string=get_every_txt)
         assert type(bp_tree.blueprint_data) is dict, "blueprint_data must always be a dict."
         assert len(bp_tree.blueprint_data.keys()) == 1, "blueprint_data must have only 1 key."
 
@@ -28,10 +21,19 @@ class TestBPTree():
         with pytest.raises(RuntimeError):
             bp_tree = BPTree()
 
+    def test_adjust_keys(self, get_every_txt):
+        bp_tree = BPTree(blueprint_string=get_every_txt)
+        original_value_keys_length = len(bp_tree._value_keys_to_use)
+        bp_tree.adjust_keys_to_return(['foo'])
+        assert len(bp_tree._value_keys_to_use) == original_value_keys_length + 1
 
-    @pytest.mark.skip
-    def test_adjust_keys(self):
-        pass
+    def test_remove_keys(self, get_a_txt):
+        bp_tree = BPTree(blueprint_string=get_a_txt('blueprint.single.txt'))
+        # Remove label.
+        assert 'label' in bp_tree._value_keys_to_use
+        bp_tree.adjust_keys_to_return(drop=['label'])
+        assert 'label' not in bp_tree._value_keys_to_use
+
 
     @pytest.mark.skip
     def test_get_filtered_data(self):
