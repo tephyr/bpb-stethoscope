@@ -51,13 +51,6 @@ class TestBlueprintBookSingleLevel():
     def original_data(self):
         return helpers.load_json_by_name(self.JSON_FILE)
 
-    @pytest.fixture(scope="class")
-    def get_data(self):
-        def _get_data(file_name:str):
-            return helpers.load_json_by_name(file_name)
-
-        return _get_data
-
     def test_single_blueprintbook_default(self, original_data):
         """Test a single blueprint book with default values."""
         filter_worker = filter_blueprints.BlueprintFilter(original_data)

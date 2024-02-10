@@ -1,13 +1,20 @@
 """Fixtures available for all tests"""
 import pytest
 
-from helpers import load_txt_by_name
+from helpers import load_json_by_name, load_txt_by_name
 
 LABELLED_TXT = (
     ('blueprint', 'blueprint.single.txt'),
     ('blueprint_book', 'blueprintbook.simple.txt'),
     ('blueprint_book', 'blueprintbook.less-simple.txt')
 )
+
+@pytest.fixture
+def get_data():
+    def _get_data(file_name:str):
+        return load_json_by_name(file_name)
+
+    return _get_data
 
 @pytest.fixture
 def get_a_txt():
