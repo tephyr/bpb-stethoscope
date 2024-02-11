@@ -50,9 +50,35 @@ class TestBPTree():
         bp_tree.adjust_keys_to_return(drop=['label'])
         assert 'label' not in bp_tree._value_keys_to_use
 
-    def test_get_filtered_data(self, get_every_txt):
-        bp_tree = BPTree(blueprint_string=get_every_txt)
+    def test_get_filtered_data_blueprint(self, get_a_txt):
+        bp_tree = BPTree(blueprint_string=get_a_txt('blueprint.single.txt'))
         assert type(bp_tree.get_filtered_data()) is dict
+        # Ignore entities.
+        bp_tree.adjust_keys_to_return(drop=['entities'])
+        print(f'{bp_tree._value_keys_to_use=}')
+        data = bp_tree.get_filtered_data()
+        assert data['blueprint'].get('item') == 'blueprint'
+        print(f'{data.keys()=}')
+        assert 'entities' not in data['blueprint'].keys(), 'entities should have been filtered out of blueprint.'
+
+    def test_get_filtered_data_blueprintbook(self, get_a_txt):
+        bp_tree = BPTree(blueprint_string=get_a_txt('blueprintbook.simple.txt'))
+        data = bp_tree.get_filtered_data()
+        assert type(data) is dict
+        # Ignore entities.
+        bp_tree.adjust_keys_to_return(keep=['index'], drop=['entities'])
+        print(f'{bp_tree._value_keys_to_use=}')
+        # Second call to .get_filtered_data().
+        data = bp_tree.get_filtered_data()
+        # Get first blueprint.
+        filtered_bp = data['blueprint_book']['blueprints'][0]['blueprint']
+        assert filtered_bp.get('item') == 'blueprint'
+        # print(f'{data=}')
+        print(f'{filtered_bp.keys()=}')
+        for key in ['label']:
+            assert key in filtered_bp.keys(), f'"{key}" should be in filtered blueprint.'
+        assert 'entities' not in filtered_bp.keys(), 'entities should have been filtered out of blueprint.'
+
 
     # @pytest.mark.skip
     def test_get_root_key(self, get_every_txt_labelled):

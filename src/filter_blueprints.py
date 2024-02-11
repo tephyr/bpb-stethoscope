@@ -27,14 +27,16 @@ Basic structure::
                 'index': 1
             }, {
 """
+from copy import deepcopy
+
 KNOWN_CONTAINERS = ('blueprint_book', 'blueprint', 'upgrade_planner', 'deconstruction_planner')
 SET_KC = set(KNOWN_CONTAINERS)
 
 class BlueprintFilter():
     def __init__(self, initial_blueprint:dict, objects_inclusive: tuple[str]=None, values_inclusive:tuple[str]=None):
-        self.initial_data = initial_blueprint or {}
+        self.initial_data = deepcopy(initial_blueprint or {})
         self.objects_inclusive = objects_inclusive or ('blueprint_book', 'blueprint')
-        self.values_inclusive = {'item'} # A set.  This value is always required.
+        self.values_inclusive = {'item'} # A set.  'item'' is always required.
         if values_inclusive is not None:
             self.values_inclusive.update(values_inclusive)
 
@@ -79,7 +81,7 @@ class BlueprintFilter():
                     result['blueprints'].append({container_key: filtered_obj})
                     # Check for additional keys to copy over at this level (other container keys).
                     for val in self.values_inclusive:
-                        if val in container:
+                        if val in container and val not in filtered_obj:
                             result['blueprints'][-1][val] = container[val]
 
         for val in self.values_inclusive:

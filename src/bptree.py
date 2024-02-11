@@ -4,8 +4,8 @@ from draftsman import utils
 
 from filter_blueprints import BlueprintFilter
 
-IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
-VALUE_KEYS = ('blueprint', 'blueprint_book', 'label', 'active_index')
+# IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
+VALUE_KEYS_STD = ('blueprint_book', 'blueprint', 'label', 'active_index')
 OBJECT_KEYS = ('blueprint_book', 'blueprint')
 
 class BPTree:
@@ -23,7 +23,7 @@ class BPTree:
                 raise RuntimeError("Either path or blueprint string must be provided.")
         self.load_blueprint()
         self._bp_filter = None # BlueprintFilter()
-        self._value_keys_to_use = set(VALUE_KEYS)
+        self._value_keys_to_use = set(VALUE_KEYS_STD)
 
     def load_blueprint(self):
         self._error_msg = None
@@ -40,6 +40,8 @@ class BPTree:
     def adjust_keys_to_return(self, keep:list[str]=None, drop:list[str]=None)->None:
         """
         Add and/or remove keys to apply to the filter.
+
+        NOTE: this is a whitelist: only the keys in this list are returned.  See ``VALUE_KEYS_STD`` for a standard **whitelist** of keys.
         """
         if type(keep) not in [list, tuple] and type(drop) not in [list, tuple]:
             raise RuntimeError("Either keep or drop must be given; both must be lists.")
@@ -49,8 +51,10 @@ class BPTree:
         if keep is not None:
             self._value_keys_to_use.update(keep)
 
-    def _run_filter(self):
+    def _prep_filter(self):
+        # print(f'Current self._bp_filter: {self._bp_filter}')
         self._bp_filter = BlueprintFilter(self.blueprint_data, OBJECT_KEYS, self._value_keys_to_use)
+        # print(f'New self._bp_filter: {self._bp_filter}; created with values_inclusive=={self._value_keys_to_use}')
 
     def get_error_msg(self):
         return self._error_msg
@@ -61,15 +65,14 @@ class BPTree:
 
         TODO: add customizable settings.
         """
-        self._run_filter()
+        self._prep_filter()
         return self._bp_filter.filter()
 
     def get_root_key(self)->str:
         """
         Returns the key at the root of the *filtered* data.
         """
-        if self._bp_filter is None:
-            self._run_filter()
+        self._prep_filter()
         root_keys = self._bp_filter.filter().keys()
         if len(root_keys) == 1:
             return list(root_keys)[0]

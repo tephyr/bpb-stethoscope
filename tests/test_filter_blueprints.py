@@ -72,7 +72,11 @@ class TestBlueprintBookSingleLevel():
         """Test a single blueprint book with custom values for filter."""
         filter_worker = filter_blueprints.BlueprintFilter(original_data, values_inclusive=('label', 'description', 'index', 'active_index'))
         expected = get_data('blueprintbook.simple.filtered.with-label-description.json')
-        assert filter_worker.filter() == expected
+        actual = filter_worker.filter()
+        assert actual == expected
+        print(f"{actual=}")
+        assert 'entities' not in actual['blueprint_book']['blueprints'][0]['blueprint'].keys()
+
 
 class TestBlueprintBookMultipleLevel():
     """
