@@ -4,7 +4,6 @@ from draftsman import utils
 
 from filter_blueprints import BlueprintFilter
 
-# IGNORE_KEYS = ('icons', 'entities', 'version', 'index', 'active_index', 'item', 'snap-to-grid', 'tiles', 'schedules')
 VALUE_KEYS_STD = ('blueprint_book', 'blueprint', 'label', 'active_index')
 OBJECT_KEYS = ('blueprint_book', 'blueprint')
 

@@ -29,7 +29,8 @@ Basic structure::
 """
 from copy import deepcopy
 
-KNOWN_CONTAINERS = ('blueprint_book', 'blueprint', 'upgrade_planner', 'deconstruction_planner')
+from constants import KNOWN_CONTAINERS
+
 SET_KC = set(KNOWN_CONTAINERS)
 
 class BlueprintFilter():
