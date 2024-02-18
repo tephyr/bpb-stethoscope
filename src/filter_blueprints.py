@@ -92,14 +92,15 @@ class BlueprintFilter():
                 filtered_obj = self._filter_by_object_type(container_key, container[container_key])
                 if filtered_obj is not None:
                     result['blueprints'].append({container_key: filtered_obj})
-                    # Check for additional keys to copy over at this level (other container keys).
-                    for val in self.values_inclusive:
-                        if val in container and val not in filtered_obj:
-                            result['blueprints'][-1][val] = container[val]
 
-        for val in self.values_inclusive:
-            if val in bpb:
-                result[val] = bpb[val]
+                # Check for additional keys to copy over at this level (other container keys).
+                for key in self.values_inclusive:
+                    if key in container and key != container_key:
+                        result['blueprints'][-1][key] = container[key]
+
+        for key in self.values_inclusive:
+            if key in bpb:
+                result[key] = bpb[key]
 
         return result
 
