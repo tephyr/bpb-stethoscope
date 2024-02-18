@@ -18,7 +18,7 @@ Test
     # Add -v as needed for verbosity.
     pytest . -vv
 
-Watchexec:::
+Watchexec::
 
     watchexec -c -e py,json,txt -- pytest . -vv
 
@@ -26,10 +26,12 @@ Test/debug notes
 ++++++++++++++++
 
 Print a trace of the variables changed in a function::
+
     @snoop(depth=1) # depth is optional
     def filter(self)->dict:
 
 Print a trace, focusing on the ``result`` variable::
+
     @snoop(depth=1, watch=('result'))
     def _filter_bp(self, bp:dict)->dict:
 
