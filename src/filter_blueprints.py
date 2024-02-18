@@ -34,10 +34,22 @@ from constants import KNOWN_CONTAINERS
 SET_KC = set(KNOWN_CONTAINERS)
 
 class BlueprintFilter():
+    """
+    Filter Factorio blueprints.
+
+    By default, only ``blueprint`` and ``blueprint_book`` containers will be retained, with their ``item`` keys.
+    """
     def __init__(self, initial_blueprint:dict, objects_inclusive: tuple[str]=None, values_inclusive:tuple[str]=None):
+        """
+        Prep a blueprint filter.
+
+        :param dict initial_blueprint: Blueprint dict to filter.
+        :param tuple[str] objects_inclusive: Optional object names to retain.  Defaults to 'blueprint_book', 'blueprint'.
+        :param tuple[str] values_inclusive: Keys *within objects* to retain.  Defaults to ``item``, which is always required.
+        """
         self.initial_data = deepcopy(initial_blueprint or {})
         self.objects_inclusive = objects_inclusive or ('blueprint_book', 'blueprint')
-        self.values_inclusive = {'item'} # A set.  'item'' is always required.
+        self.values_inclusive = {'item'} # A set.  ``item`` is always required.
         if values_inclusive is not None:
             self.values_inclusive.update(values_inclusive)
 

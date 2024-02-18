@@ -77,13 +77,11 @@ class TestBlueprintBookSingleLevel():
         print(f"{actual=}")
         assert 'entities' not in actual['blueprint_book']['blueprints'][0]['blueprint'].keys()
 
-
 class TestBlueprintBookMultipleLevel():
     """
     Test a blueprint book containing a hierarchy of other blueprint books.
     """
-    # def test_multi_level_blueprintbook():
-    #     """Test multiple levels of blueprintbooks."""
-    #     assert False
-
-    pass
+    @pytest.mark.skip
+    def test_multi_level_blueprintbook():
+        """Test multiple levels of blueprintbooks."""
+        assert False

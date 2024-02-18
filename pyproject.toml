@@ -11,6 +11,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "prettyprinter",
     "pytest>=8.0.0",
     "snoop>=0.4.3",
     "textual-dev>=1.4.0",
