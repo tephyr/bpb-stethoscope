@@ -5,7 +5,7 @@ from draftsman import utils
 from filter_blueprints import BlueprintFilter
 
 VALUE_KEYS_STD = ('blueprint_book', 'blueprint', 'label', 'active_index')
-OBJECT_KEYS = ('blueprint_book', 'blueprint')
+OBJECT_KEYS = ('blueprint_book', 'blueprint') # Should only ever be keys from constants.KNOWN_CONTAINERS.
 
 class BPTree:
     """
@@ -54,6 +54,9 @@ class BPTree:
         # print(f'Current self._bp_filter: {self._bp_filter}')
         self._bp_filter = BlueprintFilter(self.blueprint_data, OBJECT_KEYS, self._value_keys_to_use)
         # print(f'New self._bp_filter: {self._bp_filter}; created with values_inclusive=={self._value_keys_to_use}')
+
+    def get_current_filter_keys(self):
+        return self._value_keys_to_use
 
     def get_error_msg(self):
         return self._error_msg
