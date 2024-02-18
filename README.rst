@@ -3,11 +3,24 @@ blueprintbook-stethoscope
 
 TUI development
 +++++++++++++++
+Run
+---
 Two emulators::
 
     textual console
     # In other, from project root:
     textual run --dev src/tui.py
+
+Test
+----
+::
+
+    # Add -v as needed for verbosity.
+    pytest . -vv
+
+Watchexec:::
+
+    watchexec -c -e py,json,txt -- pytest . -vv
 
 Test/debug notes
 ++++++++++++++++
